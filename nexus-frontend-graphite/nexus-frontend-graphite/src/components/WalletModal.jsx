@@ -18,7 +18,7 @@ function WalletModal({ isOpen, onClose }) {
         e.preventDefault()
         if (code.trim().length > 0) {
             // Mock code logic
-            if (code === 'NEXUS2024') {
+            if (code === 'BONFIRE2024') {
                 addFunds(20)
                 alert('Code eingelöst! 20 € gutgeschrieben.')
             } else {
@@ -33,7 +33,7 @@ function WalletModal({ isOpen, onClose }) {
         <Modal isOpen={isOpen} onClose={onClose} title="Mein Guthaben">
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-dim)', display: 'block', marginBottom: '0.5rem' }}>Aktuelles Guthaben</span>
-                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent-primary)', textShadow: '0 0 20px rgba(100, 255, 218, 0.3)' }}>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>
                     {currentUser.wallet_balance.toFixed(2)} €
                 </div>
             </div>

@@ -55,13 +55,11 @@ export function AppProvider({ children }) {
     }, [])
 
     const logout = useCallback(() => {
-        // Mock logout - reset to guest or just alert
-        alert("Abgemeldet (Simulation)")
         setCurrentUser(null)
     }, [])
 
-    const switchAccount = useCallback(() => {
-        alert("Account wechseln (Simulation)")
+    const loginAs = useCallback((user) => {
+        setCurrentUser(user)
     }, [])
 
     const addToCart = useCallback((game) => {
@@ -107,7 +105,7 @@ export function AppProvider({ children }) {
         <AppContext.Provider value={{
             activeGenre, setActiveGenre,
             searchQuery, setSearchQuery,
-            currentUser, updateUser, addFunds, logout, switchAccount,
+            currentUser, updateUser, addFunds, logout, loginAs,
             cart, addToCart, removeFromCart, clearCart, isInCart, cartTotal,
             wishlist, addToWishlist, removeFromWishlist, isInWishlist,
             unseenWishlistCount, clearUnseenWishlist

@@ -237,10 +237,10 @@ a:hover {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: rgba(155, 196, 125, 0.12);
-  border: 1px solid rgba(155, 196, 125, 0.25);
+  background: rgba(184, 149, 108, 0.1);
+  border: 1px solid rgba(184, 149, 108, 0.25);
   border-radius: 20px;
-  color: var(--accent-success);
+  color: var(--accent-primary);
   font-weight: 600;
   font-size: 0.875rem;
 }

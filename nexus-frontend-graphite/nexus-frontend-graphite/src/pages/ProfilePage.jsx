@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useApp } from '../AppContext'
 import { useNavigate } from 'react-router-dom'
+import LoginModal from '../components/LoginModal'
 
 function ProfilePage() {
-    const { currentUser, updateUser, addFunds, logout, switchAccount } = useApp()
+    const { currentUser, updateUser, addFunds, logout } = useApp()
     const navigate = useNavigate()
+    const [loginModalOpen, setLoginModalOpen] = useState(false)
 
     const [activeTab, setActiveTab] = useState('general')
     const [nameForm, setNameForm] = useState({
@@ -261,9 +263,11 @@ function ProfilePage() {
             </div>
 
             <div className="section" style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between' }}>
-                <button className="btn btn--ghost" onClick={switchAccount}>👥 Account wechseln</button>
+                <button className="btn btn--ghost" onClick={() => setLoginModalOpen(true)}>👥 Account wechseln</button>
                 <button className="btn btn--danger" onClick={handleLogout}>🚪 Abmelden</button>
             </div>
+
+            <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
         </div>
     )
 }

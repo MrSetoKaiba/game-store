@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage'
 import CartModal from './components/CartModal'
 import WalletModal from './components/WalletModal'
 import WishlistModal from './components/WishlistModal'
+import LoginModal from './components/LoginModal'
 import GiftIcon from './components/GiftIcon'
 import { getGames } from './api'
 
@@ -19,6 +20,7 @@ function AppInner() {
   const [cartOpen, setCartOpen] = useState(false)
   const [walletOpen, setWalletOpen] = useState(false)
   const [wishlistOpen, setWishlistOpen] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
   const [allTags, setAllTags] = useState([])
 
   const allowedTags = ['Action Adventure', 'Co-op', 'Competitive', 'Fantasy', 'Indie', 'Open World', 'RPG', 'Shooter']
@@ -43,8 +45,12 @@ function AppInner() {
     <>
       <nav className="navbar">
         <Link to="/" className="navbar__brand" onClick={() => setActiveGenre(null)}>
-          <span className="navbar__brand-icon">N</span>
-          NEXUS
+          <span className="navbar__brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C12 2 5 10 5 15C5 18.866 8.134 22 12 22C15.866 22 19 18.866 19 15C19 10 12 2 12 2ZM12 19C10.343 19 9 17.657 9 16C9 14.5 11 12 12 9C13 12 15 14.5 15 16C15 17.657 13.657 19 12 19Z" />
+            </svg>
+          </span>
+          BONFIRE
         </Link>
 
         <ul className="navbar__nav">
@@ -99,7 +105,7 @@ function AppInner() {
               </Link>
             </>
           ) : (
-            <button className="btn btn--primary btn--sm" onClick={() => alert("Login mock")}>Login</button>
+            <button className="btn btn--primary btn--sm" onClick={() => setLoginOpen(true)}>Login</button>
           )}
         </div>
       </nav>
@@ -180,6 +186,7 @@ function AppInner() {
       <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
       <WalletModal isOpen={walletOpen} onClose={() => setWalletOpen(false)} />
       <WishlistModal isOpen={wishlistOpen} onClose={() => setWishlistOpen(false)} />
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </>
   )
 }
