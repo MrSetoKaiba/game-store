@@ -52,7 +52,7 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
-python -m uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Das Backend läuft nun unter `http://localhost:8000`.
 
