@@ -1,6 +1,6 @@
-# 🎮 GameStore (Nexus) – Spiele-Vertriebsplattform
+# Bonfire GameStore – Spiele-Vertriebsplattform
 
-Spiele-Vertriebsplattform (ähnlich Steam) mit **MongoDB** und **Neo4j**. Ein Fullstack-Projekt mit fortschrittlichen Polyglot-Persistence-Ansätzen (Nutzung mehrerer Datenbanktechnologien für deren jeweilige Stärken).
+Spiele-Vertriebsplattform mit **MongoDB** und **Neo4j**. Ein Fullstack-Projekt mit fortschrittlichen Polyglot-Persistence-Ansätzen (Nutzung mehrerer Datenbanktechnologien für deren jeweilige Stärken).
 
 **Vorlesung:** Neue Datenbankkonzepte | DHBW Baden-Württemberg
 
@@ -26,7 +26,7 @@ Spiele-Vertriebsplattform (ähnlich Steam) mit **MongoDB** und **Neo4j**. Ein Fu
 
 ---
 
-## 🚀 Schnellstart & Installation
+## Schnellstart & Installation
 
 ### Voraussetzungen
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -59,7 +59,7 @@ Das Backend läuft nun unter `http://localhost:8000`.
 ### 3. Frontend starten
 Öffne ein weiteres Terminal und navigiere in den Frontend-Ordner:
 ```bash
-cd nexus-frontend-graphite/nexus-frontend-graphite
+cd bonfire-frontend
 npm install
 npm run dev
 ```
@@ -75,7 +75,7 @@ curl -X POST http://localhost:8000/api/seed
 
 ---
 
-## 🏗 Architektur & Use-Cases
+## Architektur & Use-Cases
 
 ### Datenaufteilung (Polyglot Persistence)
 
@@ -91,8 +91,8 @@ curl -X POST http://localhost:8000/api/seed
 
 ---
 
-## 🔗 Nützliche Links & Tools
+## Nützliche Links & Tools
 
-- **Frontend App (Nexus Store):** [http://localhost:5173](http://localhost:5173)
+- **Frontend App (Bonfire Store):** [http://localhost:5173](http://localhost:5173)
 - **Backend API Docs (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Neo4j Graph-Browser:** [http://localhost:7474](http://localhost:7474) (User: `neo4j`, Password: `gamestore2026`)

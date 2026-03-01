@@ -1,5 +1,5 @@
 """
-GameStore - Spiele-Vertriebsplattform
+Bonfire GameStore - Spiele-Vertriebsplattform
 =========================================
 
 Web-Anwendung mit MongoDB (Spieldaten) + Neo4j (Beziehungsgraph).
@@ -37,9 +37,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="GameStore API",
+    title="Bonfire GameStore API",
     description="""
-    Spiele-Vertriebsplattform (ähnlich Steam) mit MongoDB und Neo4j.
+    Spiele-Vertriebsplattform mit MongoDB und Neo4j.
 
     **MongoDB** speichert alle fachlichen Daten:
     Games, Users, Reviews, Publishers, Purchases.
@@ -74,7 +74,7 @@ app.include_router(recommendations_router)
 @app.get("/", tags=["Health"])
 async def root():
     return {
-        "app": "GameStore API",
+        "app": "Bonfire GameStore API",
         "version": "1.0.0",
         "docs": "/docs",
         "openapi": "/openapi.json",

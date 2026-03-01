@@ -221,7 +221,8 @@ async def players_also_bought(game_id: str, limit: int = 5) -> list[dict]:
                   (u)-[:OWNS]->(g2:Game)
             WHERE g1 <> g2
             RETURN g2.gameId AS gameId,
-                   COUNT(DISTINCT u) AS commonOwners
+                   COUNT(DISTINCT u) AS commonOwners,
+                   COLLECT(DISTINCT u.userId) AS ownerIds
             ORDER BY commonOwners DESC
             LIMIT $limit
             """,
@@ -231,7 +232,8 @@ async def players_also_bought(game_id: str, limit: int = 5) -> list[dict]:
         return [
             {
                 "gameId": r["gameId"],
-                "commonOwners": r["commonOwners"]
+                "commonOwners": r["commonOwners"],
+                "ownerIds": r["ownerIds"]
             }
             for r in records
         ]

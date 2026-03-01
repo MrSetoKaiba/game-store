@@ -88,14 +88,26 @@ async def get_also_bought_with_details(game_id: str, limit: int = 5) -> list[dic
     game_details = await mongo_service.get_many_by_ids("games", game_ids)
     game_map = {g["_id"]: g for g in game_details}
 
+    # Besitzer-Profile laden für die UI
+    all_owner_ids = set()
+    for ab in also_bought:
+        all_owner_ids.update(ab.get("ownerIds", []))
+    owner_profiles = await mongo_service.get_many_by_ids("users", list(all_owner_ids))
+    owner_map = {p["_id"]: p for p in owner_profiles}
+
     # Schritt 3: Kombinieren
     enriched = []
     for ab in also_bought:
         game = game_map.get(ab["gameId"])
         if game:
+            owner_names = [
+                owner_map[oid].get("display_name", owner_map[oid].get("username", "?"))
+                for oid in ab.get("ownerIds", []) if oid in owner_map
+            ]
             enriched.append({
                 "game": game,
-                "common_owners": ab["commonOwners"]
+                "common_owners": ab["commonOwners"],
+                "owner_names": owner_names
             })
 
     return enriched

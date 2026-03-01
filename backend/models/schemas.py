@@ -61,6 +61,8 @@ class UserCreate(BaseModel):
     email: str
     display_name: Optional[str] = None
     wallet_balance: float = Field(default=0.0, ge=0, description="Guthaben in Euro")
+    avatar_url: Optional[str] = None
+    address: Optional[dict] = None
 
 
 class UserUpdate(BaseModel):
@@ -68,6 +70,8 @@ class UserUpdate(BaseModel):
     email: Optional[str] = None
     display_name: Optional[str] = None
     wallet_balance: Optional[float] = Field(None, ge=0)
+    avatar_url: Optional[str] = None
+    address: Optional[dict] = None
 
 
 class UserResponse(UserCreate):

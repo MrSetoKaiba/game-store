@@ -1,0 +1,41 @@
+# ── Python / Backend ──────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# ── Node / Frontend ──────────────────────
+node_modules/
+dist/
+.vite/
+
+# ── IDE / Editor ─────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Temp/Debug Scripts ───────────────────
+backend/seed/check_user.py
+backend/fix_seed.py
+backend/export_games.py
+backend/export_games2.py
+backend/extract_games.py
+backend/find_re9.py
+backend/find_refs2.py
+backend/check_refs.py
+backend/update_seed.py
+backend/new_games.json
+backend/all_games_exported.json
+
+# ── Local Temp Files ─────────────────────
+temp_games*.json
+new_games.json
