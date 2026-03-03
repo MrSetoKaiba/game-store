@@ -118,6 +118,10 @@ function HomePage() {
 
   const now = new Date()
 
+  const removeAccents = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
+
   // Filter by active genre, active publisher and search query
   const filteredGames = games.filter(g => {
     // Special filters
@@ -129,8 +133,8 @@ function HomePage() {
     const matchesGenre = activeGenre ? (g.tag_names && g.tag_names.includes(activeGenre)) : true
     const matchesPublisher = activePublisher ? g.publisher === activePublisher : true
     const matchesSearch = searchQuery
-      ? (g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        g.description?.toLowerCase().includes(searchQuery.toLowerCase()))
+      ? (removeAccents(g.title.toLowerCase()).includes(removeAccents(searchQuery.toLowerCase())) ||
+        (g.description && removeAccents(g.description.toLowerCase()).includes(removeAccents(searchQuery.toLowerCase()))))
       : true
     return matchesGenre && matchesPublisher && matchesSearch
   })
@@ -211,7 +215,7 @@ function HomePage() {
       )}
 
       {!activeGenre && !activePublisher && (() => {
-        const preOrderGames = games.filter(g => {
+        const preOrderGames = filteredGames.filter(g => {
           const rd = parseReleaseDate(g.release_date)
           return rd && rd > now
         })

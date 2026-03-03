@@ -24,6 +24,22 @@ function AppInner() {
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [allTags, setAllTags] = useState([])
+  const [searchGames, setSearchGames] = useState([])
+
+  useEffect(() => {
+    getGames().then(setSearchGames).catch(console.error);
+  }, []);
+
+  const removeAccents = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
+
+  const filteredSearchGames = searchQuery.length > 0
+    ? searchGames.filter(g =>
+      removeAccents(g.title.toLowerCase())
+        .includes(removeAccents(searchQuery.toLowerCase()))
+    )
+    : [];
 
   const unifiedTags = [
     'Action', 'Adventure', 'Co-op', 'Competitive', 'Fantasy', 'Horror', 'Indie',
@@ -123,19 +139,56 @@ function AppInner() {
             <NavLink to="/reviews" className={({ isActive }) => `subnavbar__link ${isActive ? 'active' : ''}`}>Reviews</NavLink>
           </div>
 
-          <div className="subnavbar__search">
+          <div className="subnavbar__search" style={{ position: 'relative' }}>
             <input
               type="text"
               placeholder="Im Shop suchen"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              style={searchQuery.length > 0 ? {
+                borderBottomLeftRadius: '0',
+                borderBottomRightRadius: '0',
+                borderBottomColor: 'transparent',
+              } : {}}
             />
-            <button className="subnavbar__search-btn">
+            <button className="subnavbar__search-btn" style={searchQuery.length > 0 ? { color: 'var(--accent-primary)' } : {}}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
+
+            {searchQuery.length > 0 && (
+              <div className="support-search-results animate-fadeIn" style={{
+                position: 'absolute', top: '100%', left: 0, right: 0,
+                background: 'var(--bg-darker)',
+                border: '1px solid var(--border-color)',
+                borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: '0 0 8px 8px',
+                zIndex: 100,
+                marginTop: '-1px',
+                maxHeight: '350px', overflowY: 'auto',
+                boxShadow: 'var(--shadow-glow)'
+              }}>
+                {filteredSearchGames.length > 0 ? (
+                  filteredSearchGames.map(game => (
+                    <Link key={game.id} to={`/games/${game.id}`} onClick={() => setSearchQuery('')} style={{
+                      display: 'flex', alignItems: 'center', gap: '15px', padding: '12px 20px',
+                      textDecoration: 'none', color: 'var(--text-primary)', borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                      transition: 'background 0.2s'
+                    }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                      <img src={game.cover_url} alt={game.title} style={{ width: '40px', height: '56px', objectFit: 'cover', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.3)' }} />
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '2px' }}>{game.title}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)' }}>{game.price} €</div>
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>Keine passenden Produkte gefunden.</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
