@@ -35,7 +35,7 @@ async def get_gaming_buddies(user_id: str, limit: int = 5):
 @router.get("/analytics/popular-tags/{user_id}")
 async def get_popular_tags(user_id: str):
     """Beliebteste Tags im Freundeskreis."""
-    return await neo4j_service.popular_tags_in_network(user_id)
+    return await integration_service.get_popular_tags_with_details(user_id)
 
 
 @router.get("/games/{game_id}/similar")

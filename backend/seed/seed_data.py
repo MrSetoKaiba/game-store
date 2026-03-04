@@ -1,7 +1,7 @@
 """
 Seed-Skript: Befüllt MongoDB und Neo4j mit realistischen Testdaten.
 
-Enthält 25 bekannte Spieletitel, 13 Publisher, 5 Users mit Guthaben,
+Enthält 29 bekannte Spieletitel, 14 Publisher, 6 Users mit Guthaben,
 Reviews, Käufe und ein Freundesnetzwerk.
 """
 
@@ -15,7 +15,7 @@ async def seed_all():
     driver = get_driver()
 
     # Bestehende Daten löschen
-    for coll in ["publishers", "games", "users", "reviews", "purchases"]:
+    for coll in ["publishers", "games", "users", "reviews", "purchases", "tags"]:
         await db[coll].drop()
     async with driver.session() as session:
         await session.run("MATCH (n) DETACH DELETE n")
@@ -56,7 +56,7 @@ async def seed_all():
     pub_map = {p["name"]: str(p["_id"]) for p in publishers}
     print(f"[OK] {len(publishers)} Publishers erstellt")
 
-    # ── 2. Games (25 Spiele) ─────────────────────────────
+    # ── 2. Games (29 Spiele) ─────────────────────────────
     games = [
         # === Nintendo (3 Spiele + 2 Pokémon am Ende) ===
         {"_id": ObjectId(), "title": "The Legend of Zelda: Tears of the Kingdom",
@@ -324,7 +324,7 @@ async def seed_all():
     print(f"[OK] {len(users)} User erstellt")
 
     # ── 4. Purchases (52 Käufe) ─────────────────────────
-    # Erweiterte Käufe für alle 25 Spiele verteilt auf die User
+    # Erweiterte Käufe für alle 29 Spiele verteilt auf die User
     purchases_data = [
         # Jannox: Elite Gamer
         (user_map["im_jannox"], game_map["Elden Ring"], 49.99),
@@ -403,7 +403,7 @@ async def seed_all():
     await db["purchases"].insert_many(purchases_docs)
     print(f"[OK] {len(purchases_docs)} Kaeufe erstellt")
 
-    # ── 5. Reviews (44 Reviews) ───────────────────────────
+    # ── 5. Reviews (30 Reviews) ───────────────────────────
     reviews_data = [
         # === Willalo (6 Reviews) ===
         {"_id": ObjectId(), "user_id": user_map["willalo"], "game_id": game_map["Elden Ring"],
@@ -491,23 +491,32 @@ async def seed_all():
             gid = str(game["_id"])
             await session.run("CREATE (g:Game {gameId: $gid})", gid=gid)
 
-        # Tag-Knoten + TAGGED_WITH
+        # Tag-Knoten in MongoDB & Neo4j
         all_tags = set()
         for game in games:
             for tag in game["tag_names"]:
                 all_tags.add(tag)
-        for tag in all_tags:
-            await session.run("MERGE (t:Tag {name: $name})", name=tag)
+        
+        # Tags in MongoDB speichern
+        tags_docs = [{"_id": ObjectId(), "name": tag} for tag in all_tags]
+        if tags_docs:
+            await db["tags"].insert_many(tags_docs)
+        tag_map = {doc["name"]: str(doc["_id"]) for doc in tags_docs}
+        print(f"[OK] {len(tags_docs)} Tags in MongoDB erstellt")
+
+        for tag_name, tid in tag_map.items():
+            await session.run("MERGE (t:Tag {tagId: $tid})", tid=tid)
 
         for game in games:
             gid = str(game["_id"])
-            for tag in game["tag_names"]:
+            for tag_name in game["tag_names"]:
+                tid = tag_map[tag_name]
                 await session.run(
                     """
-                    MATCH (g:Game {gameId: $gid}), (t:Tag {name: $tag})
+                    MATCH (g:Game {gameId: $gid}), (t:Tag {tagId: $tid})
                     CREATE (g)-[:TAGGED_WITH]->(t)
                     """,
-                    gid=gid, tag=tag
+                    gid=gid, tid=tid
                 )
 
         # OWNS-Beziehungen (aus Purchases)

@@ -177,15 +177,46 @@ async def get_similar_games_by_tags_with_details(game_id: str, limit: int = 5) -
     game_details = await mongo_service.get_many_by_ids("games", game_ids)
     game_map = {g["_id"]: g for g in game_details}
 
+    # Tag-Details laden
+    all_tag_ids = set()
+    for sim in similar:
+        all_tag_ids.update(sim["sharedTagIds"])
+    tag_details = await mongo_service.get_many_by_ids("tags", list(all_tag_ids))
+    tag_map = {t["_id"]: t.get("name", "Unknown") for t in tag_details}
+
     enriched = []
     for sim in similar:
         game = game_map.get(sim["gameId"])
         if game:
+            shared_tags = [tag_map.get(tid, "?") for tid in sim["sharedTagIds"]]
             enriched.append({
                 "game": game,
                 "common_tags": sim["commonTags"],
-                "shared_tags": sim["sharedTags"]
+                "shared_tags": shared_tags
             })
+
+    return enriched
+
+
+async def get_popular_tags_with_details(user_id: str) -> list[dict]:
+    """
+    Beliebteste Tags im Freundeskreis, mit Namen aus MongoDB.
+    """
+    tags_stats = await neo4j_service.popular_tags_in_network(user_id)
+    if not tags_stats:
+        return []
+
+    tag_ids = [t["tagId"] for t in tags_stats]
+    tags_details = await mongo_service.get_many_by_ids("tags", tag_ids)
+    tag_map = {t["_id"]: t.get("name", "Unknown") for t in tags_details}
+
+    enriched = []
+    for stat in tags_stats:
+        enriched.append({
+            "tag": tag_map.get(stat["tagId"], "Unknown"),
+            "uniqueGames": stat["uniqueGames"],
+            "friendsPlaying": stat["friendsPlaying"]
+        })
 
     return enriched
 

@@ -11,6 +11,9 @@ API-Dokumentation: http://localhost:8000/docs  (Swagger UI)
 OpenAPI-Spec:      http://localhost:8000/openapi.json
 """
 
+from dotenv import load_dotenv
+load_dotenv()  # .env Datei laden BEVOR config-Module importiert werden
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

@@ -44,7 +44,7 @@ async def delete_user_node(user_id: str):
 # CRUD: Game-Knoten
 # ──────────────────────────────────────────
 
-async def create_game_node(game_id: str, tag_names: list[str] = None):
+async def create_game_node(game_id: str, tag_ids: list[str] = None):
     """Erstellt einen Game-Knoten und verknüpft ihn mit Tag-Knoten."""
     driver = get_driver()
     async with driver.session() as session:
@@ -52,16 +52,16 @@ async def create_game_node(game_id: str, tag_names: list[str] = None):
             "MERGE (g:Game {gameId: $gameId})",
             gameId=game_id
         )
-        if tag_names:
-            for tag_name in tag_names:
+        if tag_ids:
+            for tid in tag_ids:
                 await session.run(
                     """
-                    MERGE (t:Tag {name: $tagName})
+                    MERGE (t:Tag {tagId: $tagId})
                     WITH t
                     MATCH (g:Game {gameId: $gameId})
                     MERGE (g)-[:TAGGED_WITH]->(t)
                     """,
-                    gameId=game_id, tagName=tag_name
+                    gameId=game_id, tagId=tid
                 )
 
 
@@ -252,7 +252,7 @@ async def popular_tags_in_network(user_id: str) -> list[dict]:
             """
             MATCH (u:User {userId: $userId})-[:FRIENDS_WITH]-(friend:User)
                   -[:OWNS]->(g:Game)-[:TAGGED_WITH]->(t:Tag)
-            RETURN t.name AS tag,
+            RETURN t.tagId AS tagId,
                    COUNT(DISTINCT g) AS uniqueGames,
                    COUNT(DISTINCT friend) AS friendsPlaying
             ORDER BY uniqueGames DESC
@@ -262,7 +262,7 @@ async def popular_tags_in_network(user_id: str) -> list[dict]:
         records = [record async for record in result]
         return [
             {
-                "tag": r["tag"],
+                "tagId": r["tagId"],
                 "uniqueGames": r["uniqueGames"],
                 "friendsPlaying": r["friendsPlaying"]
             }
@@ -316,7 +316,7 @@ async def similar_games_by_tags(game_id: str, limit: int = 5) -> list[dict]:
             WHERE g1 <> g2
             RETURN g2.gameId AS gameId,
                    COUNT(t) AS commonTags,
-                   COLLECT(t.name) AS sharedTags
+                   COLLECT(t.tagId) AS sharedTagIds
             ORDER BY commonTags DESC
             LIMIT $limit
             """,
@@ -327,7 +327,7 @@ async def similar_games_by_tags(game_id: str, limit: int = 5) -> list[dict]:
             {
                 "gameId": r["gameId"],
                 "commonTags": r["commonTags"],
-                "sharedTags": r["sharedTags"]
+                "sharedTagIds": r["sharedTagIds"]
             }
             for r in records
         ]

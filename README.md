@@ -34,16 +34,25 @@ Spiele-Vertriebsplattform mit **MongoDB** und **Neo4j**. Ein Fullstack-Projekt m
 - [Node.js 18+](https://nodejs.org/)
 
 ### 1. Datenbanken starten
-Wechsle in das Hauptverzeichnis (`game-store`) und starte die Docker-Container:
+Wechsle in das Hauptverzeichnis (`game-store`) und starte die Docker-Container für **MongoDB** und **Neo4j**:
 ```bash
 docker compose up -d
 ```
-*(Dies startet MongoDB auf Port 27017 und Neo4j auf Port 7687/7474).*
+*(Dies startet MongoDB auf Port 27017 und Neo4j auf Port 7687/7474.)*
+
+> **Hinweis:** `docker-compose.yml` startet **nur** die Datenbanken. Das Backend wird lokal gestartet (siehe Schritt 2).
+
+Prüfe mit `docker ps`, ob beide Container den Status `healthy` haben, bevor du weitermachst. **Neo4j braucht ca. 20–30 Sekunden** zum Starten.
 
 ### 2. Backend starten
 Öffne ein Terminal im Ordner `backend`:
 ```bash
 cd backend
+
+# Umgebungsvariablen einrichten (nur beim ersten Mal):
+cp .env.example .env
+# Unter Windows (CMD): copy .env.example .env
+
 python -m venv venv
 
 # Windows:
@@ -56,6 +65,8 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Das Backend läuft nun unter `http://localhost:8000`.
 
+> **Hinweis:** Die Datenbankverbindungen werden über die Datei `backend/.env` konfiguriert (Vorlage: `.env.example`). Diese wird automatisch beim Start geladen (`python-dotenv`). Das Backend hat eine eingebaute Retry-Logik für Neo4j – es wartet automatisch, bis Neo4j bereit ist.
+
 ### 3. Frontend starten
 Öffne ein weiteres Terminal und navigiere in den Frontend-Ordner:
 ```bash
@@ -67,11 +78,19 @@ Das Frontend ist nun unter dem in der Konsole angezeigten Link (meist `http://lo
 
 ### 4. Testdaten (Seeding) laden
 Um den leeren Store mit ersten Spielen, Benutzern und initialen Graphen-Beziehungen zu füllen, führe folgenden Befehl aus:
+
+*Über die Web-Oberfläche (empfohlen):*
+Öffne [http://localhost:8000/docs](http://localhost:8000/docs), klappe `POST /api/seed` auf und klicke auf **Try it out** → **Execute**.
+
+*Oder via PowerShell:*
+```powershell
+Invoke-RestMethod -Uri http://localhost:8000/api/seed -Method POST
+```
+
+*Oder via bash/curl:*
 ```bash
 curl -X POST http://localhost:8000/api/seed
 ```
-*Alternativ über die Web-Oberfläche:*
-Öffne [http://localhost:8000/docs](http://localhost:8000/docs), klappe `POST /api/seed` auf und klicke auf **Try it out** -> **Execute**.
 
 ---
 

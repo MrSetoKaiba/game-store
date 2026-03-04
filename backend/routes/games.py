@@ -13,7 +13,22 @@ router = APIRouter(prefix="/api/games", tags=["Games"])
 async def create_game(game: GameCreate):
     """Erstellt ein neues Spiel in MongoDB + Neo4j."""
     result = await mongo_service.create_one("games", game.model_dump())
-    await neo4j_service.create_game_node(result["_id"], game.tag_names)
+    
+    # Tag-IDs aus MongoDB beziehen oder neu erstellen
+    tag_ids = []
+    if game.tag_names:
+        for tag_name in game.tag_names:
+            # Suchen ob Tag existiert
+            from config import get_db
+            db = get_db()
+            tag_doc = await db["tags"].find_one({"name": tag_name})
+            if not tag_doc:
+                from bson import ObjectId
+                tag_doc = {"_id": ObjectId(), "name": tag_name}
+                await db["tags"].insert_one(tag_doc)
+            tag_ids.append(str(tag_doc["_id"]))
+
+    await neo4j_service.create_game_node(result["_id"], tag_ids)
     return result
 
 
